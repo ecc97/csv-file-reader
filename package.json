@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "app for read data csv",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "node dist/components/index.js",
     "build": "tsc --w"
