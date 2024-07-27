@@ -1,6 +1,12 @@
 "use strict";
 const inputFile = document.getElementById('csv-file');
 const tableContainer = document.querySelector('#table-container');
+const paginationContainer = document.querySelector('#pagination');
+const previousButton = document.querySelector("#previous");
+const nextButton = document.querySelector("#next");
+const recordsPerPage = 15;
+let currentPage = 1;
+let csvData = '';
 function handleFileSelect(event) {
     var _a;
     const input = event.target;
@@ -21,20 +27,24 @@ function handleFileSelect(event) {
     const reader = new FileReader();
     reader.onload = function (e) {
         var _a;
-        const csvText = (_a = e.target) === null || _a === void 0 ? void 0 : _a.result;
-        // Mostrar el contenido del CSV tal cual
-        console.log(csvText);
+        csvData = (_a = e.target) === null || _a === void 0 ? void 0 : _a.result; // Guardar datos CSV
+        console.log(csvData);
         const table = document.createElement('table');
         table.id = 'csv-table';
         table.classList.add('table', 'table-striped');
-        tableContainer === null || tableContainer === void 0 ? void 0 : tableContainer.appendChild(table);
-        createTable(csvText);
+        tableContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar la nueva tabla
+        tableContainer.appendChild(table);
+        createTable(csvData);
+        pagination(csvData); // Llamar a la función de paginación
     };
     reader.readAsText(file);
 }
 function createTable(data) {
     const table = document.getElementById('csv-table');
+    table.innerHTML = '';
     const rows = data.split('\n').map(row => row.split(','));
+    const start = (currentPage - 1) * recordsPerPage + 1;
+    const end = Math.min(start + recordsPerPage - 1, rows.length - 1);
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
     const headerRow = rows[0];
@@ -45,7 +55,7 @@ function createTable(data) {
         trHead.appendChild(th);
     });
     thead.appendChild(trHead);
-    rows.slice(1).forEach(row => {
+    rows.slice(start, end + 1).forEach(row => {
         const tr = document.createElement('tr');
         row.forEach(cell => {
             const td = document.createElement('td');
@@ -56,5 +66,27 @@ function createTable(data) {
     });
     table.appendChild(thead);
     table.appendChild(tbody);
+    updatePaginationButtons();
+}
+function pagination(data) {
+    previousButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            createTable(data);
+        }
+    });
+    nextButton.addEventListener('click', () => {
+        const maxPage = Math.ceil(data.split('\n').length / recordsPerPage);
+        if (currentPage < maxPage) {
+            currentPage++;
+            createTable(data);
+        }
+    });
+    updatePaginationButtons();
+}
+function updatePaginationButtons() {
+    previousButton.disabled = currentPage === 1;
+    const maxPage = Math.ceil(csvData.split('\n').length / recordsPerPage);
+    nextButton.disabled = currentPage >= maxPage;
 }
 inputFile.addEventListener('change', handleFileSelect);
