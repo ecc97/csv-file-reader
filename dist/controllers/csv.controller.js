@@ -1,4 +1,5 @@
 import { updatePaginationButtons } from '../components/paginationButtons.js';
+import { validateDatasetCVS } from '../components/validateDataset.js';
 export class CSVController {
     constructor(inputFile, tableContainer, paginationContainer) {
         this.inputFile = inputFile;
@@ -7,7 +8,6 @@ export class CSVController {
         this.recordsPerPage = 15;
         this.currentPage = 1;
         this.csvData = [];
-        this.totalColumns = 5;
         this.inputFile.addEventListener('change', this.handleFileSelect.bind(this));
     }
     handleFileSelect(event) {
@@ -33,7 +33,7 @@ export class CSVController {
             const csvText = (_a = e.target) === null || _a === void 0 ? void 0 : _a.result;
             const allData = csvText.split('\n').map(row => row.split(','));
             console.log('CSV Data:', allData);
-            this.csvData = this.validateDatasetCVS(allData);
+            this.csvData = validateDatasetCVS(allData);
             if (this.csvData.length === 0) {
                 if (errorMessage) {
                     errorMessage.textContent = 'El archivo CSV no tiene la estructura esperada.';
@@ -50,9 +50,6 @@ export class CSVController {
             this.createTable();
         };
         reader.readAsText(file);
-    }
-    validateDatasetCVS(data) {
-        return data.filter(row => row.length === this.totalColumns);
     }
     createTable() {
         const table = document.getElementById('csv-table');
