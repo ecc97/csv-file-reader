@@ -24,61 +24,13 @@
         <div class="mb-3">
             <input type="text" class="form-control" id="searchInput" placeholder="Buscar...">
         </div>
-        <div class="table-responsive" id="table">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>REGIÓN</th>
-                        <th>CÓDIGO DANE DEL DEPARTAMENTO</th>
-                        <th>DEPARTAMENTO</th>
-                        <th>CÓDIGO DANE DEL MUNICIPIO</th>
-                        <th>MUNICIPIO</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Región Eje Cafetero - Antioquia</td>
-                        <td>5</td>
-                        <td>Antioquia</td>
-                        <td>5.001</td>
-                        <td>Medellín</td>
-                    </tr>
-                    <tr>
-                        <td>Región Pacífica - Valle del Cauca</td>
-                        <td>76</td>
-                        <td>Valle del Cauca</td>
-                        <td>76.001</td>
-                        <td>Cali</td>
-                    </tr>
-                    <tr>
-                        <td>Región Andina - Cundinamarca</td>
-                        <td>25</td>
-                        <td>Cundinamarca</td>
-                        <td>25.001</td>
-                        <td>Bogotá</td>
-                    </tr>
-                    <tr>
-                        <td>Región Caribe - Atlántico</td>
-                        <td>8</td>
-                        <td>Atlántico</td>
-                        <td>8.001</td>
-                        <td>Barranquilla</td>
-                    </tr>
-                    <tr>
-                        <td>Región Orinoquía - Meta</td>
-                        <td>50</td>
-                        <td>Meta</td>
-                        <td>50.001</td>
-                        <td>Villavicencio</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="table-responsive" id="table-container">
+
         </div>
-        <div class="table-responsive" id="table-container"></div>
         <nav aria-label="Page navigation example">
             <div class="pagination justify-content-center" id="pagination">
-                <button class="page-item page-link" id="previous"><span>Anterior</span></button>
-                <button class="page-item page-link" id="next"><span>Siguiente</span></button>
+                <button class="page-item page-link" id="previous" disabled><span>Anterior</span></button>
+                <button class="page-item page-link" id="next" disabled><span>Siguiente</span></button>
             </div>
         </nav>
     </div>
