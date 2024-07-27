@@ -1,11 +1,11 @@
 import { CSVData } from '../models/csv.model.js';
 import { updatePaginationButtons } from '../components/paginationButtons.js';
+import { validateDatasetCVS } from '../components/validateDataset.js';
 
 export class CSVController {
     private recordsPerPage: number = 15;
     private currentPage: number = 1;
     private csvData: CSVData = [];
-    private totalColumns: number = 5;
 
     constructor(private inputFile: HTMLInputElement, private tableContainer: HTMLDivElement, public paginationContainer: HTMLDivElement) {
         this.inputFile.addEventListener('change', this.handleFileSelect.bind(this));
@@ -37,7 +37,7 @@ export class CSVController {
 
              console.log('CSV Data:', allData);
 
-            this.csvData = this.validateDatasetCVS(allData)
+            this.csvData = validateDatasetCVS(allData)
             if (this.csvData.length === 0) {
                 if (errorMessage) {
                     errorMessage.textContent = 'El archivo CSV no tiene la estructura esperada.';
@@ -58,10 +58,6 @@ export class CSVController {
         };
 
         reader.readAsText(file);
-    }
-    
-    private validateDatasetCVS(data: CSVData): CSVData {
-        return data.filter(row => row.length === this.totalColumns);
     }
     
     public createTable(): void {
