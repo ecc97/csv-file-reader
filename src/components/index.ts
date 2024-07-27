@@ -1,10 +1,13 @@
 const inputFile = document.getElementById('csv-file') as HTMLInputElement;
 const tableContainer = document.querySelector('#table-container') as HTMLDivElement;
-const paginationContainer = document.querySelector('#pagination') as HTMLLIElement
+const paginationContainer = document.querySelector('#pagination') as HTMLDivElement;
+
+const previousButton = document.querySelector("#previous") as HTMLButtonElement;
+const nextButton = document.querySelector("#next") as HTMLButtonElement;
 
 const recordsPerPage = 15;
 let currentPage = 1;
-let csvData:string = '';
+let csvData: string = '';
 
 function handleFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -27,35 +30,35 @@ function handleFileSelect(event: Event) {
     const reader = new FileReader();
 
     reader.onload = function(e) {
-        const csvText = e.target?.result as string;
+        csvData = e.target?.result as string; // Guardar datos CSV
 
-        // Mostrar el contenido del CSV tal cual
-        console.log(csvText);
+        console.log(csvData);
 
         const table = document.createElement('table') as HTMLTableElement;
         table.id = 'csv-table';
-        table.classList.add('table', 'table-striped')
+        table.classList.add('table', 'table-striped');
+        tableContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar la nueva tabla
         tableContainer.appendChild(table);
 
-        createTable(csvText);
-        pagination(csvText)
+        createTable(csvData);
+        pagination(csvData); // Llamar a la función de paginación
     };
 
     reader.readAsText(file);
 }
 
-function createTable(data: string ) {
+function createTable(data: string) {
     const table = document.getElementById('csv-table') as HTMLTableElement;
-    table.innerHTML = ''
+    table.innerHTML = '';
 
     const rows: string[][] = data.split('\n').map(row => row.split(','));
 
-    const start = (currentPage - 1) * recordsPerPage + 1
-    const end = Math.min(start + recordsPerPage - 1, rows.length -1)
+    const start = (currentPage - 1) * recordsPerPage + 1;
+    const end = Math.min(start + recordsPerPage - 1, rows.length - 1);
 
     const thead = document.createElement('thead') as HTMLTableSectionElement;
     const tbody = document.createElement('tbody') as HTMLTableSectionElement;
-    
+
     const headerRow: string[] = rows[0];
     const trHead = document.createElement('tr') as HTMLTableRowElement;
     headerRow.forEach(cell => {
@@ -65,24 +68,9 @@ function createTable(data: string ) {
     });
     thead.appendChild(trHead);
 
-    // usando for 
-    // for (let i = start; i <= end; i++){
-    //     const row = rows[i];
-    //     const tr = document.createElement('tr') as HTMLTableRowElement;
-    //     row.forEach(cell => {
-    //         const td = document.createElement('td') as HTMLTableCellElement;
-    //         td.textContent = cell;
-    //         tr.appendChild(td);
-    //     });
-    //     tbody.appendChild(tr);
-    // }
-
-    //usando foreach
-    const arrayAsc: string[] = []
     rows.slice(start, end + 1).forEach(row => {
         const tr = document.createElement('tr') as HTMLTableRowElement;
-        arrayAsc.push(row[4])
-        
+
         row.forEach(cell => {
             const td = document.createElement('td') as HTMLTableCellElement;
             td.textContent = cell;
@@ -90,36 +78,36 @@ function createTable(data: string ) {
         });
         tbody.appendChild(tr);
     });
-    
-    console.log(arrayAsc.reverse())
+
     table.appendChild(thead);
     table.appendChild(tbody);
 
+    updatePaginationButtons(); 
 }
 
 function pagination(data: string) {
-    const previousButton = document.querySelector("#previous") as HTMLButtonElement;
-    const nextButton = document.querySelector("#next") as HTMLButtonElement
-
     previousButton.addEventListener('click', () => {
         if (currentPage > 1) {
-            currentPage--
-            console.log(currentPage)
-            createTable(data)
+            currentPage--;
+            createTable(data);
         }
-    })
+    });
 
     nextButton.addEventListener('click', () => {
         const maxPage = Math.ceil(data.split('\n').length / recordsPerPage);
         if (currentPage < maxPage) {
             currentPage++;
-            console.log(currentPage)
-            createTable(data)
+            createTable(data);
         }
-    })
+    });
+
+    updatePaginationButtons(); 
 }
 
-
+function updatePaginationButtons() {
+    previousButton.disabled = currentPage === 1;
+    const maxPage = Math.ceil(csvData.split('\n').length / recordsPerPage);
+    nextButton.disabled = currentPage >= maxPage;
+}
 
 inputFile.addEventListener('change', handleFileSelect);
-
