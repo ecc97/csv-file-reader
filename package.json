@@ -1,0 +1,20 @@
+{
+  "name": "csv-file-reader",
+  "version": "1.0.0",
+  "description": "app for read data csv",
+  "main": "index.js",
+  "scripts": {
+    "test": "node dist/components/index.js",
+    "build": "tsc --w"
+  },
+  "keywords": [
+    "file",
+    "csv",
+    "data-csv"
+  ],
+  "author": "ecc97",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^5.5.4"
+  }
+}
