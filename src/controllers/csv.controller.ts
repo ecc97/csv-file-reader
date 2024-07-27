@@ -5,8 +5,9 @@ export class CSVController {
     private recordsPerPage: number = 15;
     private currentPage: number = 1;
     private csvData: CSVData = [];
+    private totalColumns: number = 5;
 
-    constructor(private inputFile: HTMLInputElement, private tableContainer: HTMLDivElement, private paginationContainer: HTMLDivElement) {
+    constructor(private inputFile: HTMLInputElement, private tableContainer: HTMLDivElement, public paginationContainer: HTMLDivElement) {
         this.inputFile.addEventListener('change', this.handleFileSelect.bind(this));
     }
 
@@ -32,11 +33,21 @@ export class CSVController {
 
         reader.onload = (e) => {
             const csvText = e.target?.result as string;
-            this.csvData = csvText.split('\n').map(row => row.split(','));
+            const allData = csvText.split('\n').map(row => row.split(','));
 
+             console.log('CSV Data:', allData);
+
+            this.csvData = this.validateDatasetCVS(allData)
+            if (this.csvData.length === 0) {
+                if (errorMessage) {
+                    errorMessage.textContent = 'El archivo CSV no tiene la estructura esperada.';
+                }
+                return;
+            }
+            console.log('Filtrado CSV Data:', this.csvData);
             console.log(csvText);
-
-            this.tableContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar la nueva tabla
+            
+            this.tableContainer.innerHTML = ''; 
 
             const table = document.createElement('table') as HTMLTableElement;
             table.id = 'csv-table';
@@ -48,7 +59,11 @@ export class CSVController {
 
         reader.readAsText(file);
     }
-
+    
+    private validateDatasetCVS(data: CSVData): CSVData {
+        return data.filter(row => row.length === this.totalColumns);
+    }
+    
     public createTable(): void {
         const table = document.getElementById('csv-table') as HTMLTableElement;
         table.innerHTML = '';
