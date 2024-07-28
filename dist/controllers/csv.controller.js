@@ -1,5 +1,7 @@
 import { updatePaginationButtons } from '../components/paginationButtons.js';
 import { validateDatasetCVS } from '../components/validateDataset.js';
+const sortColumnSelect = document.getElementById('sortColumn');
+const sortOrderSelect = document.getElementById('sortOrder');
 export class CSVController {
     constructor(inputFile, searchInput, tableContainer, paginationContainer) {
         this.inputFile = inputFile;
@@ -12,6 +14,8 @@ export class CSVController {
         this.filteredData = [];
         this.inputFile.addEventListener('change', this.handleFileSelect.bind(this));
         this.searchInput.addEventListener('input', this.handleSearch.bind(this));
+        sortColumnSelect.addEventListener('change', this.handleOrder.bind(this));
+        sortOrderSelect.addEventListener('change', this.handleOrder.bind(this));
     }
     handleFileSelect(event) {
         var _a;
@@ -67,6 +71,28 @@ export class CSVController {
             errorMessageSearch.textContent = 'No se encontraron resultados.';
             errorMessageSearch.style.display = 'block';
         }
+        this.createTable();
+    }
+    handleOrder() {
+        const columnSelect = document.getElementById('sortColumn');
+        const orderSelect = document.getElementById('sortOrder');
+        const columnIndex = parseInt(columnSelect.value);
+        const sortOrder = orderSelect.value;
+        const sortedData = [...this.filteredData];
+        sortedData.sort((a, b) => {
+            const aValue = a[columnIndex];
+            const bValue = b[columnIndex];
+            if (aValue < bValue) {
+                return sortOrder === 'asc' ? -1 : 1;
+            }
+            else if (aValue > bValue) {
+                return sortOrder === 'asc' ? 1 : -1;
+            }
+            else {
+                return 0;
+            }
+        });
+        this.filteredData = sortedData;
         this.createTable();
     }
     createTable() {

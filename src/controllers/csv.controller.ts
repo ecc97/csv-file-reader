@@ -2,6 +2,9 @@ import { CSVData } from '../models/csv.model.js';
 import { updatePaginationButtons } from '../components/paginationButtons.js';
 import { validateDatasetCVS } from '../components/validateDataset.js';
 
+const sortColumnSelect = document.getElementById('sortColumn') as HTMLSelectElement;
+const sortOrderSelect = document.getElementById('sortOrder') as HTMLSelectElement;
+
 export class CSVController {
     private recordsPerPage: number = 15;
     private currentPage: number = 1;
@@ -11,6 +14,9 @@ export class CSVController {
     constructor(private inputFile: HTMLInputElement, public searchInput: HTMLInputElement, private tableContainer: HTMLDivElement, public paginationContainer: HTMLDivElement) {
         this.inputFile.addEventListener('change', this.handleFileSelect.bind(this));
         this.searchInput.addEventListener('input', this.handleSearch.bind(this));
+
+        sortColumnSelect.addEventListener('change', this.handleOrder.bind(this));
+        sortOrderSelect.addEventListener('change', this.handleOrder.bind(this));
     }
 
     private handleFileSelect(event: Event): void {
@@ -76,6 +82,33 @@ export class CSVController {
         }
         this.createTable();
     }
+
+    private handleOrder(): void {
+        const columnSelect = document.getElementById('sortColumn') as HTMLSelectElement;
+        const orderSelect = document.getElementById('sortOrder') as HTMLSelectElement;
+
+        const columnIndex = parseInt(columnSelect.value);
+        const sortOrder = orderSelect.value;
+
+        const sortedData = [...this.filteredData]; 
+
+        sortedData.sort((a, b) => {
+            const aValue = a[columnIndex];
+            const bValue = b[columnIndex];
+
+            if (aValue < bValue) {
+                return sortOrder === 'asc' ? -1 : 1;
+            } else if (aValue > bValue) {
+                return sortOrder === 'asc' ? 1 : -1;
+            } else {
+                return 0;
+            }
+        });
+
+        this.filteredData = sortedData;
+        this.createTable();
+    }
+
     
     public createTable(): void {
         const table = document.getElementById('csv-table') as HTMLTableElement;
