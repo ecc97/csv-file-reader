@@ -1,14 +1,17 @@
 import { updatePaginationButtons } from '../components/paginationButtons.js';
 import { validateDatasetCVS } from '../components/validateDataset.js';
 export class CSVController {
-    constructor(inputFile, tableContainer, paginationContainer) {
+    constructor(inputFile, searchInput, tableContainer, paginationContainer) {
         this.inputFile = inputFile;
+        this.searchInput = searchInput;
         this.tableContainer = tableContainer;
         this.paginationContainer = paginationContainer;
         this.recordsPerPage = 15;
         this.currentPage = 1;
         this.csvData = [];
+        this.filteredData = [];
         this.inputFile.addEventListener('change', this.handleFileSelect.bind(this));
+        this.searchInput.addEventListener('input', this.handleSearch.bind(this));
     }
     handleFileSelect(event) {
         var _a;
@@ -34,6 +37,7 @@ export class CSVController {
             const allData = csvText.split('\n').map(row => row.split(','));
             console.log('CSV Data:', allData);
             this.csvData = validateDatasetCVS(allData);
+            this.filteredData = this.csvData;
             if (this.csvData.length === 0) {
                 if (errorMessage) {
                     errorMessage.textContent = 'El archivo CSV no tiene la estructura esperada.';
@@ -51,10 +55,24 @@ export class CSVController {
         };
         reader.readAsText(file);
     }
+    handleSearch(e) {
+        const errorMessageSearch = document.getElementById('errorMessageSearch');
+        const query = e.target.value.toLowerCase();
+        this.filteredData = this.csvData.filter(row => row.some(cell => cell.toLowerCase().includes(query)));
+        if (this.filteredData.length !== 0) {
+            this.currentPage = 1; // Resetear a la primera página después de la búsqueda
+            errorMessageSearch.style.display = 'none';
+        }
+        else {
+            errorMessageSearch.textContent = 'No se encontraron resultados.';
+            errorMessageSearch.style.display = 'block';
+        }
+        this.createTable();
+    }
     createTable() {
         const table = document.getElementById('csv-table');
         table.innerHTML = '';
-        const rows = this.csvData;
+        const rows = this.filteredData;
         const start = (this.currentPage - 1) * this.recordsPerPage + 1;
         const end = Math.min(start + this.recordsPerPage - 1, rows.length - 1);
         const thead = document.createElement('thead');
