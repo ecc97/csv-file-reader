@@ -16,10 +16,20 @@
         </div>
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Tabla de los Datos</h2>
-            <select class="form-select form-select-sm w-auto" id="sortOrder">
-                <option value="asc">Ascendente</option>
-                <option value="desc">Descendente</option>
-            </select>
+            <div>
+                <select class="form-select form-select-sm w-auto" id="sortColumn">
+                    <option value="0">Región</option>
+                    <option value="1">Código DANE del Departamento</option>
+                    <option value="2">Departamento</option>
+                    <option value="3">Código DANE del Municipio</option>
+                    <option value="4">Municipio</option>
+                </select>
+                <br>
+                <select class="form-select form-select-sm w-auto" id="sortOrder">
+                    <option value="asc">Ascendente</option>
+                    <option value="desc">Descendente</option>
+                </select>
+            </div>
         </div>
         <div class="mb-3">
             <input type="text" class="form-control" id="searchInput" placeholder="Buscar...">
